@@ -31,6 +31,17 @@ public enum Type: Int32, CustomStringConvertible {
         case .Poop: return "Poop"
         }
     }
+    
+    public var emojiDescription: String {
+        switch self {
+        case .WalkBegin: return "🏃🏼"
+        case .WalkEnd: return "🚶🏼"
+        case .Meal: return "🍔"
+        case .Snack: return "🍌"
+        case .Pee: return "🚽"
+        case .Poop: return "💩"
+        }
+    }
 }
 
 public class Event: NSManagedObject {

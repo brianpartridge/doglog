@@ -41,10 +41,13 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
     func addTapped(sender: AnyObject) {
         let vc = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
         Type.allValues.forEach { type in
-            vc.addAction(UIAlertAction(title: type.description, style: .Default, handler: { _ in
+            vc.addAction(UIAlertAction(title: "\(type.emojiDescription) \(type.description)", style: .Default, handler: { _ in
                 self.insertEvent(ofType: type)
             }))
         }
+        vc.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in
+            self.dismissViewControllerAnimated(true, completion: nil)
+        }))
         presentViewController(vc, animated: true, completion: nil)
     }
 
@@ -121,7 +124,7 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
     }
 
     func configureCell(cell: UITableViewCell, withEvent event: Event) {
-        cell.textLabel!.text = "\(event.enumType.description) at \(event.timeStamp.description)"
+        cell.textLabel!.text = "\(event.enumType.emojiDescription) at \(event.timeStamp.description)"
     }
 
     // MARK: - Fetched results controller
