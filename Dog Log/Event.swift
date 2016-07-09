@@ -9,26 +9,31 @@
 import CoreData
 import Foundation
 
-class Event: NSManagedObject {
-    enum Type: Int32, CustomStringConvertible {
-        case WalkBegin
-        case WalkEnd
-        case Meal
-        case Snack
-        case Pee
-        case Poop
-        
-        var description: String {
-            switch self {
-            case .WalkBegin: return "Walk Began"
-            case .WalkEnd: return "Walk Ended"
-            case .Meal: return "Meal"
-            case .Snack: return "Snack"
-            case .Pee: return "Pee"
-            case .Poop: return "Poop"
-            }
+public enum Type: Int32, CustomStringConvertible {
+    case WalkBegin
+    case WalkEnd
+    case Meal
+    case Snack
+    case Pee
+    case Poop
+    
+    static public var allValues: [Type] {
+        return [.WalkBegin, .WalkEnd, .Meal, .Snack, .Pee, .Poop]
+    }
+    
+    public var description: String {
+        switch self {
+        case .WalkBegin: return "Walk Began"
+        case .WalkEnd: return "Walk Ended"
+        case .Meal: return "Meal"
+        case .Snack: return "Snack"
+        case .Pee: return "Pee"
+        case .Poop: return "Poop"
         }
     }
+}
+
+public class Event: NSManagedObject {
     
     @NSManaged var note: String
     @NSManaged var timeStamp: NSDate

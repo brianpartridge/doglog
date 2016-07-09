@@ -20,7 +20,7 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
         // Do any additional setup after loading the view, typically from a nib.
         self.navigationItem.leftBarButtonItem = self.editButtonItem()
 
-        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(insertNewObject(_:)))
+        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(addTapped(_:)))
         self.navigationItem.rightBarButtonItem = addButton
         if let split = self.splitViewController {
             let controllers = split.viewControllers
@@ -37,16 +37,25 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    func addTapped(sender: AnyObject) {
+        let vc = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
+        Type.allValues.forEach { type in
+            vc.addAction(UIAlertAction(title: type.description, style: .Default, handler: { _ in
+                self.insertEvent(ofType: type)
+            }))
+        }
+        presentViewController(vc, animated: true, completion: nil)
+    }
 
-    func insertNewObject(sender: AnyObject) {
+    func insertEvent(ofType type: Type) {
         let context = self.fetchedResultsController.managedObjectContext
         let entity = self.fetchedResultsController.fetchRequest.entity!
-        let newManagedObject = NSEntityDescription.insertNewObjectForEntityForName(entity.name!, inManagedObjectContext: context)
+        let event = NSEntityDescription.insertNewObjectForEntityForName(entity.name!, inManagedObjectContext: context) as! Event
              
-        // If appropriate, configure the new managed object.
-        // Normally you should use accessor methods, but using KVC here avoids the need to add a custom class to the template.
-        newManagedObject.setValue(NSDate(), forKey: "timeStamp")
-             
+        event.timeStamp = NSDate()
+        event.enumType = type
+        
         // Save the context.
         do {
             try context.save()
