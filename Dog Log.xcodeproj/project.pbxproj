@@ -15,6 +15,7 @@
 		BD2A85991D31407100E77A88 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD2A85981D31407100E77A88 /* Assets.xcassets */; };
 		BD2A859C1D31407100E77A88 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BD2A859A1D31407100E77A88 /* LaunchScreen.storyboard */; };
 		BD2A85A71D31407100E77A88 /* Dog_LogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD2A85A61D31407100E77A88 /* Dog_LogTests.swift */; };
+		BD2A85B21D31427600E77A88 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD2A85B11D31427600E77A88 /* Event.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,7 @@
 		BD2A85A21D31407100E77A88 /* Dog LogTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Dog LogTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD2A85A61D31407100E77A88 /* Dog_LogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dog_LogTests.swift; sourceTree = "<group>"; };
 		BD2A85A81D31407100E77A88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BD2A85B11D31427600E77A88 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +91,7 @@
 				BD2A859A1D31407100E77A88 /* LaunchScreen.storyboard */,
 				BD2A859D1D31407100E77A88 /* Info.plist */,
 				BD2A858E1D31407100E77A88 /* Dog_Log.xcdatamodeld */,
+				BD2A85B11D31427600E77A88 /* Event.swift */,
 			);
 			path = "Dog Log";
 			sourceTree = "<group>";
@@ -207,6 +210,7 @@
 				BD2A85901D31407100E77A88 /* Dog_Log.xcdatamodeld in Sources */,
 				BD2A85921D31407100E77A88 /* LogViewController.swift in Sources */,
 				BD2A85941D31407100E77A88 /* DetailViewController.swift in Sources */,
+				BD2A85B21D31427600E77A88 /* Event.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

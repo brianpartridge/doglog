@@ -63,7 +63,7 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "showDetail" {
             if let indexPath = self.tableView.indexPathForSelectedRow {
-            let object = self.fetchedResultsController.objectAtIndexPath(indexPath)
+                let object = self.fetchedResultsController.objectAtIndexPath(indexPath)
                 let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
                 controller.detailItem = object
                 controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
@@ -85,8 +85,8 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
-        let object = self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject
-        self.configureCell(cell, withObject: object)
+        let object = self.fetchedResultsController.objectAtIndexPath(indexPath) as! Event
+        self.configureCell(cell, withEvent: object)
         return cell
     }
 
@@ -111,8 +111,8 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
         }
     }
 
-    func configureCell(cell: UITableViewCell, withObject object: NSManagedObject) {
-        cell.textLabel!.text = object.valueForKey("timeStamp")!.description
+    func configureCell(cell: UITableViewCell, withEvent event: Event) {
+        cell.textLabel!.text = "\(event.enumType.description) at \(event.timeStamp.description)"
     }
 
     // MARK: - Fetched results controller
@@ -176,7 +176,7 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
             case .Delete:
                 tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
             case .Update:
-                self.configureCell(tableView.cellForRowAtIndexPath(indexPath!)!, withObject: anObject as! NSManagedObject)
+                self.configureCell(tableView.cellForRowAtIndexPath(indexPath!)!, withEvent: anObject as! Event)
             case .Move:
                 tableView.moveRowAtIndexPath(indexPath!, toIndexPath: newIndexPath!)
         }
