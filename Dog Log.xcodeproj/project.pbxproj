@@ -42,6 +42,7 @@
 		BD2A85A61D31407100E77A88 /* Dog_LogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dog_LogTests.swift; sourceTree = "<group>"; };
 		BD2A85A81D31407100E77A88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BD2A85B11D31427600E77A88 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		BD58B3CC1D333DD1009B6867 /* Dog_Log 2 with day attribute.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Dog_Log 2 with day attribute.xcdatamodel"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -407,6 +408,7 @@
 				BD2A85AD1D31407100E77A88 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		BD2A85AE1D31407100E77A88 /* Build configuration list for PBXNativeTarget "Dog LogTests" */ = {
 			isa = XCConfigurationList;
@@ -415,6 +417,7 @@
 				BD2A85B01D31407100E77A88 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
@@ -422,9 +425,10 @@
 		BD2A858E1D31407100E77A88 /* Dog_Log.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				BD58B3CC1D333DD1009B6867 /* Dog_Log 2 with day attribute.xcdatamodel */,
 				BD2A858F1D31407100E77A88 /* Dog_Log.xcdatamodel */,
 			);
-			currentVersion = BD2A858F1D31407100E77A88 /* Dog_Log.xcdatamodel */;
+			currentVersion = BD58B3CC1D333DD1009B6867 /* Dog_Log 2 with day attribute.xcdatamodel */;
 			path = Dog_Log.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

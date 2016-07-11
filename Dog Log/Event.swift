@@ -46,8 +46,10 @@ public enum Type: Int32, CustomStringConvertible {
 
 public class Event: NSManagedObject {
     
+    @NSManaged var dayStamp: NSDate!
     @NSManaged var note: String
     @NSManaged var timeStamp: NSDate
+    
     @NSManaged var type: Int32
     
     var enumType: Type {
@@ -57,5 +59,10 @@ public class Event: NSManagedObject {
         set {
             type = newValue.rawValue
         }
+    }
+    
+    func updateTimeStamp(date: NSDate = NSDate()) {
+        timeStamp = date
+        dayStamp = NSCalendar.currentCalendar().components([.Calendar, .Year, .Month, .Day], fromDate: timeStamp).date!
     }
 }
