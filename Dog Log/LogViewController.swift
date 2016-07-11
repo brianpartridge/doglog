@@ -56,7 +56,7 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
         let entity = self.fetchedResultsController.fetchRequest.entity!
         let event = NSEntityDescription.insertNewObjectForEntityForName(entity.name!, inManagedObjectContext: context) as! Event
         
-        event.updateTimeStamp()
+        event.updateTimeStamp(NSDate())
         event.enumType = type
         
         // Save the context.

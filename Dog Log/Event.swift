@@ -46,6 +46,7 @@ public enum Type: Int32, CustomStringConvertible {
 
 public class Event: NSManagedObject {
     
+    /// Force unwrapped because this property didn't exist in v1 of the model and we need to populate it if empty.
     @NSManaged var dayStamp: NSDate!
     @NSManaged var note: String
     @NSManaged var timeStamp: NSDate
@@ -61,8 +62,18 @@ public class Event: NSManagedObject {
         }
     }
     
-    func updateTimeStamp(date: NSDate = NSDate()) {
+    func updateTimeStamp(date: NSDate) {
         timeStamp = date
-        dayStamp = NSCalendar.currentCalendar().components([.Calendar, .Year, .Month, .Day], fromDate: timeStamp).date!
+        dayStamp = NSCalendar.currentCalendar().components([.Calendar, .Era, .Year, .Month, .Day], fromDate: date).date!
+    }
+    
+    // MARK: - NSManagedObject
+    
+    override public func awakeFromFetch() {
+        super.awakeFromFetch()
+        
+        if let _ = dayStamp { } else {
+            updateTimeStamp(timeStamp)
+        }
     }
 }
