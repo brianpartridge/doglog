@@ -55,8 +55,8 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
         let context = self.fetchedResultsController.managedObjectContext
         let entity = self.fetchedResultsController.fetchRequest.entity!
         let event = NSEntityDescription.insertNewObjectForEntityForName(entity.name!, inManagedObjectContext: context) as! Event
-             
-        event.timeStamp = NSDate()
+        
+        event.updateTimeStamp()
         event.enumType = type
         
         // Save the context.
@@ -122,9 +122,27 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
             }
         }
     }
+    
+    private let sectionDateFormatter: NSDateFormatter = {
+        let formatter = NSDateFormatter()
+        formatter.dateStyle = .ShortStyle
+        formatter.timeStyle = .NoStyle
+        return formatter
+    }()
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard let firstEvent = fetchedResultsController.sections?[section].objects?.first as? Event,
+            dayStamp = firstEvent.dayStamp else { return "Unknown" }
+        return sectionDateFormatter.stringFromDate(dayStamp)
+    }
 
+    private let cellDateFormatter: NSDateFormatter = {
+        let formatter = NSDateFormatter()
+        formatter.dateStyle = .NoStyle
+        formatter.timeStyle = .ShortStyle
+        return formatter
+    }()
     func configureCell(cell: UITableViewCell, withEvent event: Event) {
-        cell.textLabel!.text = "\(event.enumType.emojiDescription) at \(event.timeStamp.description)"
+        cell.textLabel!.text = "\(event.enumType.emojiDescription) at \(cellDateFormatter.stringFromDate(event.timeStamp))"
     }
 
     // MARK: - Fetched results controller
@@ -135,21 +153,14 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
         }
         
         let fetchRequest = NSFetchRequest()
-        // Edit the entity name as appropriate.
         let entity = NSEntityDescription.entityForName("Event", inManagedObjectContext: self.managedObjectContext!)
         fetchRequest.entity = entity
-        
-        // Set the batch size to a suitable number.
         fetchRequest.fetchBatchSize = 20
-        
-        // Edit the sort key as appropriate.
-        let sortDescriptor = NSSortDescriptor(key: "timeStamp", ascending: false)
-        
-        fetchRequest.sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "timeStamp", ascending: false)]
         
         // Edit the section name key path and cache name if appropriate.
         // nil for section name key path means "no sections".
-        let aFetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: nil, cacheName: "Master")
+        let aFetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: "dayStamp", cacheName: "Master")
         aFetchedResultsController.delegate = self
         _fetchedResultsController = aFetchedResultsController
         
