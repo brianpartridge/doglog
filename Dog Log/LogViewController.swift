@@ -40,7 +40,7 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
     
     func addTapped(sender: AnyObject) {
         let vc = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
-        Type.allValues.forEach { type in
+        availableEventTypes().forEach { type in
             vc.addAction(UIAlertAction(title: "\(type.emojiDescription) \(type.description)", style: .Default, handler: { _ in
                 self.insertEvent(ofType: type)
             }))
@@ -207,5 +207,22 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
      }
      */
 
+    func availableEventTypes() -> [Type] {
+        let fetchRequest = NSFetchRequest()
+        fetchRequest.entity = NSEntityDescription.entityForName("Event", inManagedObjectContext: self.managedObjectContext!)
+        fetchRequest.fetchBatchSize = 1
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "timeStamp", ascending: false)]
+        fetchRequest.predicate = NSPredicate(format: "type == \(Type.WalkBegin.rawValue) OR type == \(Type.WalkEnd.rawValue)")
+        
+        let results = try! managedObjectContext!.executeFetchRequest(fetchRequest)
+        guard !results.isEmpty else { return [Type.WalkBegin] }
+        guard let firstResult = results.first, event = firstResult as? Event else { fatalError() }
+        
+        switch event.enumType {
+        case .WalkBegin: return [Type.WalkEnd, Type.Pee, Type.Poop]
+        case .WalkEnd: return [Type.WalkBegin]
+        default: fatalError()
+        }
+    }
 }
 
