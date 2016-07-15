@@ -9,20 +9,25 @@
 import UIKit
 import CoreData
 
-class LogViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+class LogViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate {
     
     // MARK: - Private Properties
     
-    private let actionBar: UIStackView = {
-        let s = UIStackView()
-        s.backgroundColor = UIColor.redColor()
-        s.distribution = .FillEqually
-        s.frame = CGRect(x: 0, y: 0, width: 0, height: 64)
-        return s
-    }()
-    
     private var actionButtonsByType: [Type: UIButton] = [:]
     
+    private var tableView: UITableView = {
+        let t = UITableView(frame: CGRectZero, style: .Plain)
+        t.translatesAutoresizingMaskIntoConstraints = false
+        return t
+    }()
+    private let actionBar: UIStackView = {
+        let s = UIStackView()
+        s.translatesAutoresizingMaskIntoConstraints = false
+        s.axis = .Horizontal
+        s.distribution = .FillEqually
+        return s
+    }()
+
     // MARK: - Internal Properties
     
     var detailViewController: DetailViewController? = nil
@@ -34,7 +39,18 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.tableFooterView = actionBar
+        view.addSubview(tableView)
+        view.addSubview(actionBar)
+        
+        let views = ["table": tableView, "bar": actionBar]
+        let metrics = ["barHeight":  64]
+        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[table]|", options: [], metrics: metrics, views: views))
+        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[bar]|", options: [], metrics: metrics, views: views))
+        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[table][bar(barHeight)]|", options: [], metrics: metrics, views: views))
+        
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "eventCell")
         
         // The compiler didn't like when I tried to populate this in init...
         actionButtonsByType = {
@@ -47,8 +63,11 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
     }
 
     override func viewWillAppear(animated: Bool) {
-        self.clearsSelectionOnViewWillAppear = self.splitViewController!.collapsed
         super.viewWillAppear(animated)
+        
+        if let indexPath = tableView.indexPathForSelectedRow {
+            tableView.deselectRowAtIndexPath(indexPath, animated: animated)
+        }
         
         updateActionBar()
     }
@@ -69,28 +88,28 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
 
     // MARK: - Table View
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return self.fetchedResultsController.sections?.count ?? 0
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let sectionInfo = self.fetchedResultsController.sections![section]
         return sectionInfo.numberOfObjects
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier("eventCell", forIndexPath: indexPath)
         let object = self.fetchedResultsController.objectAtIndexPath(indexPath) as! Event
         self.configureCell(cell, withEvent: object)
         return cell
     }
 
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }
 
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
             let context = self.fetchedResultsController.managedObjectContext
             context.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject)
@@ -106,13 +125,17 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
         }
     }
     
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+    }
+    
     private let sectionDateFormatter: NSDateFormatter = {
         let formatter = NSDateFormatter()
         formatter.dateStyle = .ShortStyle
         formatter.timeStyle = .NoStyle
         return formatter
     }()
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         guard let firstEvent = fetchedResultsController.sections?[section].objects?.first as? Event,
             dayStamp = firstEvent.dayStamp else { return "Unknown" }
         return sectionDateFormatter.stringFromDate(dayStamp)
