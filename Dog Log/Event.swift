@@ -9,13 +9,14 @@
 import CoreData
 import Foundation
 
+/// Note: Persisted values, do NOT re-number.
 public enum Type: Int32, CustomStringConvertible {
-    case WalkBegin
-    case WalkEnd
-    case Meal
-    case Snack
-    case Pee
-    case Poop
+    case WalkBegin = 0
+    case WalkEnd = 1
+    case Meal = 2
+    case Snack = 3
+    case Pee = 4
+    case Poop = 5
     
     static public var allValues: [Type] {
         return [.WalkBegin, .WalkEnd, .Meal, .Snack, .Pee, .Poop]
@@ -35,7 +36,7 @@ public enum Type: Int32, CustomStringConvertible {
     public var emojiDescription: String {
         switch self {
         case .WalkBegin: return "🏃🏼"
-        case .WalkEnd: return "🚶🏼"
+        case .WalkEnd: return "🏡"
         case .Meal: return "🍔"
         case .Snack: return "🍌"
         case .Pee: return "🚽"
