@@ -22,9 +22,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         splitViewController.delegate = self
 
         let masterNavigationController = splitViewController.viewControllers[0] as! UINavigationController
+        masterNavigationController.navigationBar.barTintColor = UIColor.icon
+        masterNavigationController.navigationBar.tintColor = UIColor.whiteColor()
+
         let controller = masterNavigationController.topViewController as! LogViewController
         controller.managedObjectContext = self.managedObjectContext
         controller.eventManager = self.eventManager
+        
         return true
     }
 

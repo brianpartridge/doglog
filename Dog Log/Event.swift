@@ -47,12 +47,12 @@ public enum Type: Int, CustomStringConvertible {
     
     public var color: UIColor {
         switch self {
-        case .WalkBegin: return UIColor.greenColor()
-        case .WalkEnd: return UIColor.redColor()
+        case .WalkBegin: return UIColor(hexString: "#1bd45c")
+        case .WalkEnd: return UIColor(hexString: "#ff3b20")
         case .Meal: return UIColor.blackColor()
         case .Snack: return UIColor.blackColor()
-        case .Pee: return UIColor.yellowColor()
-        case .Poop: return UIColor.brownColor()
+        case .Pee: return UIColor(hexString: "#edfa20")
+        case .Poop: return UIColor(hexString: "#ff8720")
         }
     }
 }
