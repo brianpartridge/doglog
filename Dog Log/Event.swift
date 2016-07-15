@@ -11,7 +11,7 @@ import Foundation
 import UIKit
 
 /// Note: Persisted values, do NOT re-number.
-public enum Type: Int32, CustomStringConvertible {
+public enum Type: Int, CustomStringConvertible {
     case WalkBegin = 0
     case WalkEnd = 1
     case Meal = 2
@@ -68,10 +68,10 @@ public class Event: NSManagedObject {
     
     var enumType: Type {
         get {
-            return Type(rawValue: type)!
+            return Type(rawValue: Int(type))!
         }
         set {
-            type = newValue.rawValue
+            type = Int32(newValue.rawValue)
         }
     }
     

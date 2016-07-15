@@ -21,16 +21,7 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
         return s
     }()
     
-    private let actionButtonsByType: [Type: UIButton] = {
-        var results: [Type: UIButton] = [:]
-        Type.allValues.forEach {
-            let button = UIButton(type: .System)
-            button.setTitle($0.emojiDescription, forState: .Normal)
-            button.backgroundColor = $0.color
-            results[$0] = button
-        }
-        return results
-    }()
+    private var actionButtonsByType: [Type: UIButton] = [:]
     
     // MARK: - Internal Properties
     
@@ -44,6 +35,15 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
         super.viewDidLoad()
         
         tableView.tableFooterView = actionBar
+        
+        // The compiler didn't like when I tried to populate this in init...
+        actionButtonsByType = {
+            var results: [Type: UIButton] = [:]
+            for type in Type.allValues {
+                results[type] = self.actionButtonForType(type)
+            }
+            return results
+        }()
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -219,6 +219,21 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
             //print("Unresolved error \(error), \(error.userInfo)")
             abort()
         }
+    }
+    
+    private func actionButtonForType(type: Type) -> UIButton {
+        let button = UIButton(type: .System)
+        button.setTitle(type.emojiDescription, forState: .Normal)
+        button.backgroundColor = type.color
+        button.tag = type.rawValue
+        button.addTarget(self, action: #selector(actionTapped), forControlEvents: .TouchUpInside)
+        return button
+    }
+    
+    // MARK: - Actions
+    
+    @objc func actionTapped(sender: UIButton) {
+        insertEvent(ofType: Type(rawValue: sender.tag)!)
     }
 }
 
