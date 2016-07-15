@@ -11,6 +11,8 @@ import CoreData
 
 class LogViewController: UITableViewController, NSFetchedResultsControllerDelegate {
     
+    // MARK: - Private Properties
+    
     private let actionBar: UIStackView = {
         let s = UIStackView()
         s.backgroundColor = UIColor.redColor()
@@ -30,21 +32,16 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
         return results
     }()
     
+    // MARK: - Internal Properties
+    
     var detailViewController: DetailViewController? = nil
     var managedObjectContext: NSManagedObjectContext? = nil
     var eventManager: EventManager!
+    
+    // MARK: - UIViewController
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        self.navigationItem.leftBarButtonItem = self.editButtonItem()
-
-        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(addTapped(_:)))
-        self.navigationItem.rightBarButtonItem = addButton
-        if let split = self.splitViewController {
-            let controllers = split.viewControllers
-            self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
-        }
         
         tableView.tableFooterView = actionBar
     }
@@ -54,43 +51,6 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
         super.viewWillAppear(animated)
         
         updateActionBar()
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    func addTapped(sender: AnyObject) {
-        let vc = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
-        availableEventTypes().forEach { type in
-            vc.addAction(UIAlertAction(title: "\(type.emojiDescription) \(type.description)", style: .Default, handler: { _ in
-                self.insertEvent(ofType: type)
-            }))
-        }
-        vc.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in
-            self.dismissViewControllerAnimated(true, completion: nil)
-        }))
-        presentViewController(vc, animated: true, completion: nil)
-    }
-
-    func insertEvent(ofType type: Type) {
-        let context = self.fetchedResultsController.managedObjectContext
-        let entity = self.fetchedResultsController.fetchRequest.entity!
-        let event = NSEntityDescription.insertNewObjectForEntityForName(entity.name!, inManagedObjectContext: context) as! Event
-        
-        event.updateTimeStamp(NSDate())
-        event.enumType = type
-        
-        // Save the context.
-        do {
-            try context.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            //print("Unresolved error \(error), \(error.userInfo)")
-            abort()
-        }
     }
 
     // MARK: - Segues
@@ -232,39 +192,33 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
         self.tableView.endUpdates()
         updateActionBar()
     }
-
-    /*
-     // Implementing the above methods to update the table view in response to individual changes may have performance implications if a large number of changes are made simultaneously. If this proves to be an issue, you can instead just implement controllerDidChangeContent: which notifies the delegate that all section and object changes have been processed.
-     
-     func controllerDidChangeContent(controller: NSFetchedResultsController) {
-         // In the simplest, most efficient, case, reload the table view.
-         self.tableView.reloadData()
-     }
-     */
-
-    func availableEventTypes() -> [Type] {
-        let fetchRequest = NSFetchRequest()
-        fetchRequest.entity = NSEntityDescription.entityForName("Event", inManagedObjectContext: self.managedObjectContext!)
-        fetchRequest.fetchBatchSize = 1
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "timeStamp", ascending: false)]
-        fetchRequest.predicate = NSPredicate(format: "type == \(Type.WalkBegin.rawValue) OR type == \(Type.WalkEnd.rawValue)")
-        
-        let results = try! managedObjectContext!.executeFetchRequest(fetchRequest)
-        guard !results.isEmpty else { return [Type.WalkBegin] }
-        guard let firstResult = results.first, event = firstResult as? Event else { fatalError() }
-        
-        switch event.enumType {
-        case .WalkBegin: return [Type.WalkEnd, Type.Pee, Type.Poop]
-        case .WalkEnd: return [Type.WalkBegin]
-        default: fatalError()
-        }
-    }
+    
+    // MARK: - Private Methods
     
     private func updateActionBar() {
         actionBar.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         let eventTypes: [Type] = eventManager.isWalking ? [.Pee, .Poop, .WalkEnd] : [.WalkBegin]
         eventTypes.forEach { actionBar.addArrangedSubview(self.actionButtonsByType[$0]!) }
+    }
+    
+    private func insertEvent(ofType type: Type) {
+        let context = self.fetchedResultsController.managedObjectContext
+        let entity = self.fetchedResultsController.fetchRequest.entity!
+        let event = NSEntityDescription.insertNewObjectForEntityForName(entity.name!, inManagedObjectContext: context) as! Event
+        
+        event.updateTimeStamp(NSDate())
+        event.enumType = type
+        
+        // Save the context.
+        do {
+            try context.save()
+        } catch {
+            // Replace this implementation with code to handle the error appropriately.
+            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+            //print("Unresolved error \(error), \(error.userInfo)")
+            abort()
+        }
     }
 }
 
