@@ -8,6 +8,7 @@
 
 import CoreData
 import Foundation
+import UIKit
 
 /// Note: Persisted values, do NOT re-number.
 public enum Type: Int32, CustomStringConvertible {
@@ -41,6 +42,17 @@ public enum Type: Int32, CustomStringConvertible {
         case .Snack: return "🍌"
         case .Pee: return "🚽"
         case .Poop: return "💩"
+        }
+    }
+    
+    public var color: UIColor {
+        switch self {
+        case .WalkBegin: return UIColor.greenColor()
+        case .WalkEnd: return UIColor.redColor()
+        case .Meal: return UIColor.blackColor()
+        case .Snack: return UIColor.blackColor()
+        case .Pee: return UIColor.yellowColor()
+        case .Poop: return UIColor.brownColor()
         }
     }
 }

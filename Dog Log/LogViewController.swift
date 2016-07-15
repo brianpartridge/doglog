@@ -10,10 +10,28 @@ import UIKit
 import CoreData
 
 class LogViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+    
+    private let actionBar: UIStackView = {
+        let s = UIStackView()
+        s.backgroundColor = UIColor.redColor()
+        s.distribution = .FillEqually
+        s.frame = CGRect(x: 0, y: 0, width: 0, height: 64)
+        return s
+    }()
+    
+    private let actionButtonsByType: [Type: UIButton] = {
+        var results: [Type: UIButton] = [:]
+        Type.allValues.forEach {
+            let button = UIButton(type: .System)
+            button.setTitle($0.emojiDescription, forState: .Normal)
+            button.backgroundColor = $0.color
+            results[$0] = button
+        }
+        return results
+    }()
 
     var detailViewController: DetailViewController? = nil
     var managedObjectContext: NSManagedObjectContext? = nil
-
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,11 +44,15 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
             let controllers = split.viewControllers
             self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
         }
+        
+        tableView.tableFooterView = actionBar
     }
 
     override func viewWillAppear(animated: Bool) {
         self.clearsSelectionOnViewWillAppear = self.splitViewController!.collapsed
         super.viewWillAppear(animated)
+        
+        updateActionBar()
     }
 
     override func didReceiveMemoryWarning() {
@@ -235,5 +257,11 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
         default: fatalError()
         }
     }
+    
+    private func updateActionBar() {
+        actionBar.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        
+        let actions: [Type] = [.Pee, .Poop, .WalkEnd]
+        actions.forEach { actionBar.addArrangedSubview(self.actionButtonsByType[$0]!) }
+    }
 }
-
