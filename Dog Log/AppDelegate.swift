@@ -14,7 +14,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
     var window: UIWindow?
 
-
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         let splitViewController = self.window!.rootViewController as! UISplitViewController
@@ -25,6 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         let masterNavigationController = splitViewController.viewControllers[0] as! UINavigationController
         let controller = masterNavigationController.topViewController as! LogViewController
         controller.managedObjectContext = self.managedObjectContext
+        controller.eventManager = self.eventManager
         return true
     }
 
@@ -112,6 +112,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         var managedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
         managedObjectContext.persistentStoreCoordinator = coordinator
         return managedObjectContext
+    }()
+    
+    lazy var eventManager: EventManager = {
+       return EventManager(managedObjectContext: self.managedObjectContext)
     }()
 
     // MARK: - Core Data Saving support

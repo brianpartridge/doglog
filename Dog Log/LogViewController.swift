@@ -29,9 +29,10 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
         }
         return results
     }()
-
+    
     var detailViewController: DetailViewController? = nil
     var managedObjectContext: NSManagedObjectContext? = nil
+    var eventManager: EventManager!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -229,6 +230,7 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
 
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
         self.tableView.endUpdates()
+        updateActionBar()
     }
 
     /*
@@ -261,7 +263,34 @@ class LogViewController: UITableViewController, NSFetchedResultsControllerDelega
     private func updateActionBar() {
         actionBar.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        let actions: [Type] = [.Pee, .Poop, .WalkEnd]
-        actions.forEach { actionBar.addArrangedSubview(self.actionButtonsByType[$0]!) }
+        let eventTypes: [Type] = eventManager.isWalking ? [.Pee, .Poop, .WalkEnd] : [.WalkBegin]
+        eventTypes.forEach { actionBar.addArrangedSubview(self.actionButtonsByType[$0]!) }
+    }
+}
+
+class EventManager {
+    
+    private let managedObjectContext: NSManagedObjectContext
+    
+    var isWalking: Bool {
+        let fetchRequest = NSFetchRequest()
+        fetchRequest.entity = NSEntityDescription.entityForName("Event", inManagedObjectContext: self.managedObjectContext)
+        fetchRequest.fetchBatchSize = 1
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "timeStamp", ascending: false)]
+        fetchRequest.predicate = NSPredicate(format: "type == \(Type.WalkBegin.rawValue) OR type == \(Type.WalkEnd.rawValue)")
+        
+        let results = try! managedObjectContext.executeFetchRequest(fetchRequest)
+        guard let firstResult = results.first else { return false }
+        
+        guard let event = firstResult as? Event else { fatalError() }
+        switch event.enumType {
+        case .WalkBegin: return true
+        case .WalkEnd: return false
+        default: fatalError()
+        }
+    }
+    
+    init(managedObjectContext: NSManagedObjectContext) {
+        self.managedObjectContext = managedObjectContext
     }
 }
