@@ -219,10 +219,17 @@ class LogViewController: UIViewController, UITableViewDataSource, UITableViewDel
     // MARK: - Private Methods
     
     private func updateActionBar() {
-        actionBar.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        // Populate the bar if not done yet.
+        if (actionBar.arrangedSubviews.isEmpty) {
+            actionButtonsByType.values.forEach { actionBar.addArrangedSubview($0) }
+        }
         
-        let eventTypes: [Type] = eventManager.isWalking ? [.Pee, .Poop, .WalkEnd] : [.WalkBegin]
-        eventTypes.forEach { actionBar.addArrangedSubview(self.actionButtonsByType[$0]!) }
+        // Temporarily hide all the buttons. Yay, stack view!
+        actionBar.arrangedSubviews.forEach { $0.hidden = true }
+        
+        // Display only the buttons that shouldn't be hidden.
+        let visibleEventTypes: [Type] = eventManager.isWalking ? [.Pee, .Poop, .WalkEnd] : [.WalkBegin]
+        visibleEventTypes.forEach { actionButtonsByType[$0]?.hidden = false }
     }
     
     private func insertEvent(ofType type: Type) {
